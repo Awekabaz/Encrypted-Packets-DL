@@ -9,7 +9,6 @@ def read_pcap_file(path: Path) -> PcapReader:
 
     return PcapReader(str(path))
 
-
 def should_omit_packet(packet)-> bool:
     
     if (packet.flags & 0x13) and (TCP in packet):
