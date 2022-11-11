@@ -33,12 +33,12 @@ class TransformPCAP:
 
             if self.rows and (i > 0 and i%self.batch_size==0):
                 
-                self._write()
+                self._write(idx)
                 self.rows.clear()
                 idx += 1
 
         if self.rows:
-            self._write()
+            self._writeidx
 
         with Path(self.str_path_output + '_SUCCESS').open('w') as f:
             f.write('') 
@@ -55,7 +55,7 @@ class TransformPCAP:
             }
             self.rows.append(row)
 
-    def _write(self):
+    def _write(self, idx):
         p_output_path = Path(self.str_path_output + f'_part_{idx:04d}.json.gz')
     
         with p_output_path.open('wb') as f, gzip.open(f, 'wt') as f_out:
