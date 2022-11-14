@@ -9,26 +9,26 @@ from model.dataset import custom_collate
 
 
 class CNN(LightningModule):
-    def __init__(self, c1_output_dim, c1_kernel_size, c1_strides, c2_output_dim, c2_kernel_size, c2_strides,
+    def __init__(self, c1_output_dim, c1_kernel_size, c1_stride, c2_output_dim, c2_kernel_size, c2_stride,
                  output_dim, data_path, signal_length=1500):
         super().__init__()
         self.save_hyperparameters()
 
-        self.c1 = nn.Sequential(
+        self.conv1 = nn.Sequential(
             nn.Conv1d(
                 in_channels=1,
                 out_channels=self.hparams.c1_output_dim,
                 kernel_size=self.hparams.c1_kernel_size,
-                stride=self.hparams.c1_strides
+                stride=self.hparams.c1_stride
             ),
             nn.ReLU()
         )
-        self.c2 = nn.Sequential(
+        self.conv2 = nn.Sequential(
             nn.Conv1d(
                 in_channels=self.hparams.c1_output_dim,
                 out_channels=self.hparams.c2_output_dim,
                 kernel_size=self.hparams.c2_kernel_size,
-                stride=self.hparams.c2_strides
+                stride=self.hparams.c2_stride
             ),
             nn.ReLU()
         )
@@ -79,8 +79,8 @@ class CNN(LightningModule):
     
         inp_dim = x.shape[0]
 
-        x = self.c1(x)
-        x = self.c2(x)
+        x = self.conv1(x)
+        x = self.conv2(x)
         x = self.max_pool(x)
 
         x = x.reshape(inp_dim, -1)

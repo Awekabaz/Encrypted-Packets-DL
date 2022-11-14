@@ -15,7 +15,7 @@ def confusion_matrix(data_path, model, class_num):
     
     dataset_dict = datasets.load_dataset(data_path)
     dataset = dataset_dict[list(dataset_dict.keys())[0]]     
-    dataloader = DataLoader(dataset, batch_size=4096, collate_fn=custom_collate)
+    dataloader = DataLoader(dataset, batch_size=1024, collate_fn=custom_collate)
     
     for data in dataloader:
         x = data['feature'].float().to(model.device)
