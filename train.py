@@ -7,10 +7,10 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import TensorBoardLogger
 from pytorch_lightning.utilities.seed import seed_everything
-from model.CNN import CNN
+from model.CNN_model import CNN
 
 
-def train_cnn(c1_kernel_size, c1_output_dim, c1_stride, c2_kernel_size, c2_output_dim, c2_stride, output_dim, data_path,
+def train_cnn(c1_kernel_size, c1_output_dim, c1_strides, c2_kernel_size, c2_output_dim, c2_strides, output_dim, data_path,
               epoch, model_path, signal_length, logger):
 
     Path(model_path).parent.mkdir(parents=True, exist_ok=True)
@@ -19,10 +19,10 @@ def train_cnn(c1_kernel_size, c1_output_dim, c1_stride, c2_kernel_size, c2_outpu
     CNN_model = CNN(
         c1_kernel_size=c1_kernel_size,
         c1_output_dim=c1_output_dim,
-        c1_stride=c1_stride,
+        c1_strides=c1_strides,
         c2_kernel_size=c2_kernel_size,
         c2_output_dim=c2_output_dim,
-        c2_stride=c2_stride,
+        c2_stride=c2_strides,
         output_dim=output_dim,
         data_path=data_path,
         signal_length=signal_length,
@@ -38,24 +38,17 @@ def train_cnn(c1_kernel_size, c1_output_dim, c1_stride, c2_kernel_size, c2_outpu
 
 @click.command()
 @click.option('--data', help='a path to folder containing training data', required=True)
-@click.option('--model', help='output model path', required=True)
-@click.option('--task', help='Task type. Options: "app" or "traffic"', required=True)
+@click.option('--model_path', help='save a model in the given path', required=True)
 
-def main(data, model, task):
-    if task == 'app':
-        # train_application_cnn
-        app_logger = TensorBoardLogger('app_CNN_logs', 'app_CNN')
-        train_cnn(c1_kernel_size=4, c1_output_dim=200, c1_stride=3, c2_kernel_size=5, c2_output_dim=200, c2_stride=1,
-                output_dim=17, data_path=data, epoch=20, model_path=model, signal_length=1500, logger=app_logger)
+def main(data, model_path, type):
+    app_logger = TensorBoardLogger('app_CNN_logs', 'app_CNN')
+    train_cnn(c1_kernel_size=4, c1_output_dim=200, c1_stride=3, c2_kernel_size=5, c2_output_dim=200, c2_stride=1,
+                output_dim=17, data_path=data, epoch=20, model_path=model_path, signal_length=1500, logger=app_logger)
     
-    elif task == 'traffic':
-        #train_traffic_cnn
-        traffic_logger = TensorBoardLogger('traffic_CNN_logs', 'traffic_CNN')
-        train_cnn(c1_kernel_size=5, c1_output_dim=200, c1_stride=3, c2_kernel_size=4, c2_output_dim=200, c2_stride=3,
-                output_dim=12, data_path=data, epoch=20, model_path=model, signal_length=1500, logger=traffic_logger)
+    traffic_logger = TensorBoardLogger('traffic_CNN_logs', 'traffic_CNN')
+    train_cnn(c1_kernel_size=5, c1_output_dim=200, c1_stride=3, c2_kernel_size=4, c2_output_dim=200, c2_stride=3,
+            output_dim=12, data_path=data, epoch=20, model_path=model_path, signal_length=1500, logger=traffic_logger)
  
-    else:
-        exit('Given Task is not supported')
 
 if __name__ == '__main__':
     main()
