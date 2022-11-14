@@ -17,13 +17,13 @@ def confusion_matrix(data_path, model, class_num):
     dataset = dataset_dict[list(dataset_dict.keys())[0]]     
     dataloader = DataLoader(dataset, batch_size=4096, collate_fn=custom_collate)
     
-    for batch in dataloader:
-        x = batch['feature'].float().to(model.device)
-        y = batch['label'].long()
-        y_hat = torch.argmax(F.log_softmax(model(x), dim=1), dim=1)
+    for data in dataloader:
+        x = data['feature'].float().to(model.device)
+        y = data['label'].long()
+        y_pred = torch.argmax(F.log_softmax(model(x), dim=1), dim=1)
 
         for i in range(len(y)):
-            matrix[y[i], y_hat[i]] += 1
+            matrix[y[i], y_pred[i]] += 1
 
     return matrix
 
